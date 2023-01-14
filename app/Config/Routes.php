@@ -51,6 +51,8 @@ $routes->delete('/admin/(:num)', 'Admin::deleteJemaat/$1', ['filter' => 'role:ad
 // Berita
 $routes->get('/admin/berita', 'Admin::berita', ['filter' => 'role:admin']);
 $routes->get('/admin/formBerita', 'Admin::formBerita', ['filter' => 'role:admin']);
+$routes->post('/admin/addNewBerita', 'Admin::addNewBerita', ['filter' => 'role:admin']);
+
 
 
 

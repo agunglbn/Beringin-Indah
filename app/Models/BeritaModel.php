@@ -19,4 +19,12 @@ class BeritaModel
         $query = $builder->get();
         return $query->getResult();
     }
+
+    public function insert_berita($data)
+    {
+
+        $builder = $this->db->table('berita');
+        $builder->insert($data);
+        return $this->db->affectedRows();
+    }
 }

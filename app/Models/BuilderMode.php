@@ -241,7 +241,7 @@ class BuilderModel
         $builder->insert($data);
         return $this->db->affectedRows();
     }
-
+    // Jika Insert Data walapun id sama 
     public function insert_ignore_contact()
     {
         $builder = $this->db->table('contact');

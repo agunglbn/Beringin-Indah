@@ -131,16 +131,19 @@ class Admin extends BaseController
             'sektor'     => 'required',
             'jk' => 'required',
             'pekerjaan' => 'required',
-            'img' => [
-                'rules' => 'uploaded[img]|max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
-                'error' => [
-                    'uploaded' => 'Upload 1 File',
-                    'max_size' => 'Ukuran Minimal 2mb',
-                ]
-            ]
+            'img' => 'uploaded[img]|max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
+
         ];
 
-        if (!$this->validate($rules)) {
+
+        $error = [
+            'nama_jemaat' => [
+                'required' => 'Nama jemaat tidak boleh kosong !!',
+                'min_length' => 'Minimal karakter 3 huruf !!',
+                'max_length' => 'Maximal Karakter 128 huruf !!'
+            ]
+        ];
+        if (!$this->validate($rules, $error)) {
             session()->setFlashdata('error', 'Data User Tidak Dapat Ditambahkan !!!');
             return redirect()->back()->withInput();
         }
@@ -198,18 +201,24 @@ class Admin extends BaseController
             'alamat' =>  'required|min_length[3]',
             'sektor'     => 'required',
             'jk' => 'required',
+            'kategori' => 'required',
             'pekerjaan' => 'required',
             'kepala_keluarga' =>  'required|alpha_numeric_space|min_length[3]|max_length[128]',
             'nohp_kp' => 'required|max_length[15]',
-            'img' => [
-                'rules' => 'max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
-                'error' => [
-                    'max_size' => 'Ukuran Minimal 2mb',
-                ]
+            'img' => 'max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
+
+        ];
+
+        $error = [
+            'nama_jemaat' => [
+                'required' => 'Nama jemaat tidak boleh kosong !!',
+                'min_length' => 'Minimal karakter 3 huruf !!',
+                'max_length' => 'Maximal Karakter 128 huruf !!'
             ]
         ];
 
-        if (!$this->validate($rules)) {
+
+        if (!$this->validate($rules, $error)) {
             session()->setFlashdata('error', 'Data Jemaat Tidak Dapat Diubah !!!');
             return redirect()->back()->withInput();
         }
@@ -270,6 +279,7 @@ class Admin extends BaseController
         $data = ([
             'title' => 'Data Berita',
             'berita' => $this->berita->getBerita(),
+
         ]);
         return view('admin/berita', $data);
     }
@@ -279,8 +289,74 @@ class Admin extends BaseController
         $data = ([
             'title' => 'Form Tambah Berita',
             'validation' => \Config\Services::validation(),
-
+            'kategori' => $this->kategori->findAll(),
         ]);
         return view('admin/AddNewBerita', $data);
+    }
+
+    public function addNewBerita()
+    {
+        // Validasi Form Data
+        $rules = [
+            'judul_berita' => 'required|alpha_numeric_space',
+            'isi_berita' => 'trim|required|alpha_numeric_space',
+            'kategori_berita' => 'required',
+            'img' => 'uploaded[img]|max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
+            'status' => 'required',
+
+
+        ];
+        $error = [
+            'judul_berita' => [
+                'required' => 'Judul Berita tidak boleh kosong !!',
+            ],
+
+            'isi_berita' => [
+                'required' => 'Isi Berita tidak boleh kosong !!',
+            ],
+            'kategori' => [
+                'required' => 'Kategori Berita tidak boleh kosong !!',
+            ],
+            'img' => [
+                'uploaded' => 'Gambar tidak boleh kosong !!',
+                'max_size' => 'Ukuran gambar Maximal 2 Mb !!!',
+                'mime_in[img,image/jpeg,image/jpg,image/png]' => 'Gambar harus jpg/jpeg/png !!',
+            ],
+            'status' => [
+                'required' => 'Status tidak boleh kosong !!',
+
+            ]
+        ];
+
+        if (!$this->validate($rules, $error)) {
+            session()->setFlashdata('error', 'Data Berita Tidak Dapat Ditambahkan !!!');
+            return redirect()->back()->withInput();
+
+            $img = $this->request->getFile('img');
+            $filename = $img->getRandomName();
+
+            // Kiri Field Database Kanan Field Name Form 
+            $data = array(
+                'username' => $this->request->getVar('username'),
+                'user' => $this->request->getVar('user'),
+                'judul_berita' => $this->request->getVar('judul_berita'),
+                'isi_berita' => $this->request->getVar('isi_berita'),
+                'kategori_berita' => $this->request->getVar('judul_berita'),
+                'status' => $this->request->getVar('status'),
+                'created' => date("Y-m-d H:i:s"),
+                'modified' => date("Y-m-d H:i:s"),
+                'img' => $filename,
+            );
+
+            // $img->move('assets/vendors/img_berita/', $filename);
+            // $builder = $this->db->table("berita");
+            // $success = $builder->insert($data);
+            $img->move('assets/vendors/img_berita/', $filename);
+            $success = $this->berita->insert_berita($data);
+            if ($success) {
+                session()->setFlashdata('success', 'Data Berita Berhasil Di!!');
+                return redirect()->to(base_url('/admin/berita'));
+            }
+        }
     }
 }
