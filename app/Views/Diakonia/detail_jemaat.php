@@ -229,7 +229,8 @@
                                                                 name="kategori">
                                                                 <?php foreach ($kategori as $kat) :  ?>
                                                                 <?php if (old('kategori', $jemaat[0]['kategori']) == $kat['nama_kategori']) : ?>
-                                                                <option value="<?= $kat['nama_kategori']; ?> " selected>
+                                                                <option value="<?php echo  $jemaat[0]['kategori']; ?>"
+                                                                    selected>
                                                                     <?= $kat['nama_kategori']; ?></option>
                                                                 <?php else : ?>
                                                                 <option value="<?php echo $kat['nama_kategori']; ?>">
@@ -264,9 +265,7 @@
                                                             <label>Alamat Lengkap :</label>
                                                             <textarea
                                                                 class="form-control <?= $validation->hasError('img') ? 'is-invalid' : null ?>"
-                                                                name="alamat"> <?php echo $jemaat[0]['alamat']; ?>
-                                                            
-                                                            </textarea>
+                                                                name="alamat"><?php echo $jemaat[0]['alamat']; ?></textarea>
                                                             <?php if ($validation->hasError('alamat')) : ?>
                                                             <div class="invalid-feedback">
                                                                 <?= $validation->getError('alamat'); ?>

@@ -60,10 +60,16 @@
                 </li>
                 <?php if (in_groups('admin')) : ?>
                 <li>
+                    <a href="<?php echo base_url('admin/berita'); ?>" class="dropdown-toggle no-arrow">
+                        <span class="micon dw dw-book1"></span><span class="mtext">Berita</span>
+                    </a>
+                </li>
+                <li>
                     <a href="<?php echo base_url('admin'); ?>" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-add-user"></span><span class="mtext">User Management</span>
                     </a>
                 </li>
+
                 <?php endif; ?>
                 <!-- <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">

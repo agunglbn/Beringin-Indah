@@ -28,7 +28,7 @@
                                 Add New
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="<?= base_url('admin/newJemaat'); ?>">Add New User</a>
+                                <a class="dropdown-item" href="<?= base_url('admin/formBerita'); ?>">Add New News</a>
                                 <a class="dropdown-item" href="#">Export User</a>
                                 <a class="dropdown-item" href="#">Import User</a>
                             </div>
@@ -41,7 +41,7 @@
             <!-- Simple Datatable start -->
             <div class="card-box mb-30">
                 <div class="pd-20">
-                    <h4 class="text-blue h4">Data User</h4>
+                    <h4 class="text-blue h4">Data Berita</h4>
                     <p class="mb-0">
                         you can find more options
 
@@ -64,24 +64,22 @@
                         <thead>
                             <tr>
                                 <th class="table-plus datatable-nosort">No</th>
-                                <th>Nama Jemaat</th>
-                                <th>NO HP</th>
-                                <th>Alamat</th>
-                                <th>Pekerjaan</th>
-                                <th>Sektor</th>
+                                <th>Judul Berita</th>
+                                <th>Isi</th>
+                                <th>Kategori</th>
+                                <th>Status</th>
                                 <th class="datatable-nosort">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $i = 1; ?>
-                            <?php foreach ($jemaat as $user) : ?>
+                            <?php foreach ($berita as $user) : ?>
                             <tr>
                                 <td class="table-plus"><?= $i++; ?></td>
-                                <td><?php echo $user['nama_jemaat'] ?></td>
-                                <td><?php echo $user['nohp'] ?></td>
-                                <td><?php echo $user['alamat'] ?></td>
-                                <td><?php echo $user['pekerjaan'] ?></td>
-                                <td><?php echo $user['sektor'] ?></td>
+                                <td><?php echo word_limiter($user['judul_berita'], 10, '......') ?></td>
+                                <td><?php echo $user['isi_berita'] ?></td>
+                                <td><?php echo $user['kategori_berita'] ?></td>
+                                <td><?php echo $user['status'] ?></td>
                                 <td>
                                     <div class="dropdown">
                                         <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle"

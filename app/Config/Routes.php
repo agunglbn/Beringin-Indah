@@ -42,11 +42,16 @@ $routes->get('/admin/index', 'Admin::index', ['filter' => 'role:admin']);
 $routes->get('/admin/(:num)', 'Admin::detailUser/$1', ['filter' => 'role:admin']);
 $routes->get('/admin/newUser', 'Admin::newUser', ['filter' => 'role:admin']);
 $routes->post('/admin/tambah', 'Admin::tambah', ['filter' => 'role:admin']);
+// Jemaat
 $routes->get('/admin/jemaat', 'Admin::jemaat', ['filter' => 'role:admin']);
 $routes->post('/admin/addNewJemaat', 'Admin::addNewJemaat', ['filter' => 'role:admin']);
 $routes->get('/admin/(:num)', 'Admin::detailJemaat/$1', ['filter' => 'role:admin']);
 $routes->post('/admin/(:num)', 'Admin::updateJemaat/$1', ['filter' => 'role:admin']);
 $routes->delete('/admin/(:num)', 'Admin::deleteJemaat/$1', ['filter' => 'role:admin']);
+// Berita
+$routes->get('/admin/berita', 'Admin::berita', ['filter' => 'role:admin']);
+$routes->get('/admin/formBerita', 'Admin::formBerita', ['filter' => 'role:admin']);
+
 
 
 

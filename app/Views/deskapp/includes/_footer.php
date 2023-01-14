@@ -33,6 +33,7 @@
 <script src="<?php echo base_url(); ?>/assets/src/plugins/datatables/js/vfs_fonts.js"></script>
 <!-- Datatable Setting js -->
 <script src="<?php echo base_url(); ?>/assets/vendors/scripts/datatable-setting.js"></script>
+<script src="<?php echo base_url(); ?>/assets/vendors/myscript.js"></script>
 <script>
 $(function() {
     <?php if (session()->has("success")) { ?>

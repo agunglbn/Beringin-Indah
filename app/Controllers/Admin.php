@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\M_user;
 use App\Models\Jemaat;
+use App\Models\BeritaModel;
 use App\Models\Kategori;
 use App\Models\AuthGroups;
 use Myth\Auth\Models\UserModel;
@@ -15,16 +16,17 @@ use Myth\Auth\Entities\User;
 class Admin extends BaseController
 {
 
-    protected $db, $builder, $model, $jemaat, $validation, $kategori;
+    protected $db, $builder, $model, $jemaat, $validation, $kategori, $berita;
     public function __construct()
     {
         $this->db = \Config\Database::connect();
         $this->builder = $this->db->table('users');
         $this->model = new M_user;
+        $this->berita = new BeritaModel;
         $this->jemaat = new Jemaat;
         $this->kategori = new Kategori;
         $this->validation = \Config\Services::validation();
-        helper('url');
+        helper('url', 'text');
     }
 
 
@@ -259,5 +261,26 @@ class Admin extends BaseController
         // $jemaat = $this->jemaat->find($id);
         // $this->jemaat->delete($id);
         return redirect()->back()->with('success', 'Data Jemaat Berhasil Dihapus !!');
+    }
+
+    // Berita
+
+    public function berita()
+    {
+        $data = ([
+            'title' => 'Data Berita',
+            'berita' => $this->berita->getBerita(),
+        ]);
+        return view('admin/berita', $data);
+    }
+
+    public function formBerita()
+    {
+        $data = ([
+            'title' => 'Form Tambah Berita',
+            'validation' => \Config\Services::validation(),
+
+        ]);
+        return view('admin/AddNewBerita', $data);
     }
 }
