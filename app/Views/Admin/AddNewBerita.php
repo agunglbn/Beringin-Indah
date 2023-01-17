@@ -60,23 +60,13 @@
                     <?= session('error'); ?>
                 </div>
                 <?php endif; ?>
-                <form action="<?= base_url('/admin/addNewBerita'); ?>" enctype="multipart/form-data" method="post"
+                <form action="<?= base_url('/admin/TambahBerita'); ?>" enctype="multipart/form-data" method="post"
                     class="user">
                     <?= csrf_field() ?>
+                    <input name="username" value="<?= user()->username; ?>" class="form-control" type="text"
+                        placeholder="" hidden />
 
-                    <div class="form-group row">
-                        <label class="col-sm-12 col-md-2 col-form-label">Username</label>
-                        <div class="col-sm-12 col-md-10">
-                            <input name="username" value=" <?= user()->username; ?>" class="form-control" type="text"
-                                placeholder="" disabled />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-12 col-md-2 col-form-label">Role</label>
-                        <div class="col-sm-12 col-md-10">
-                            <input name="user" value="Admin" class="form-control" type="text" placeholder="" disabled />
-                        </div>
-                    </div>
+                    <input name="user" value="Admin" class="form-control" type="text" placeholder="" hidden />
 
                     <div class="form-group row">
                         <label class="col-sm-12 col-md-2 col-form-label">Judul Berita</label>
@@ -96,8 +86,8 @@
                         <label class="col-sm-12 col-md-2 col-form-label">Isi Berita</label>
                         <div class="html-editor pd-20 col-sm-12 col-md-10">
                             <textarea
-                                class="textarea_editor form-control border-radius-0 <?= $validation->hasError('kategori_berita') ? 'is-invalid' : null ?>"
-                                name="isi_berita" value="<?= set_value('isi_berita'); ?>"
+                                class="form-control border-radius-0 <?= $validation->hasError('kategori_berita') ? 'is-invalid' : null ?>"
+                                name="isi_berita" id="editor1" value="<?= set_value('isi_berita'); ?>"
                                 placeholder="Enter text ..."></textarea>
                             <?php if ($validation->hasError('isi_berita')) : ?>
                             <div class="invalid-feedback">
@@ -176,12 +166,6 @@
     </div>
 </div>
 <!-- Default Basic Forms End -->
-
-
-
-
-
-
 
 <?php $this->endSection(); ?>
 <!-- <div class="html-editor pd-20 card-box mb-30">

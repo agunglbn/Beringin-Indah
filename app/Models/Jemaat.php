@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use CodeIgniter\Database\BaseBuilder;
+
 use CodeIgniter\Model;
 
 class Jemaat extends Model
@@ -24,11 +26,18 @@ class Jemaat extends Model
     protected $createdField  = 'created';
     protected $updatedField  = 'modified';
     protected $deletedField  = '';
+    protected $db;
 
     public function getJemaat()
     {
         return $this->findAll();
+        // $this->db->From('jemaat');
+        // $this->db->order_by('created', 'DESC');
+        // $query = $this->table->get();
     }
+
+    public function getJemaatEmail($id = false)
+    { }
 
     public function detailJemaat($id)
     {

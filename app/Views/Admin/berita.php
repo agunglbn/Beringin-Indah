@@ -28,9 +28,10 @@
                                 Add New
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="<?= base_url('admin/formBerita'); ?>">Add New News</a>
-                                <a class="dropdown-item" href="#">Export User</a>
-                                <a class="dropdown-item" href="#">Import User</a>
+                                <a class="dropdown-item" href="<?= base_url('admin/formBerita'); ?>">Tambah Berita
+                                    Baru</a>
+                                <a class="dropdown-item" href="#">Export blog</a>
+                                <a class="dropdown-item" href="#">Import blog</a>
                             </div>
                         </div>
                     </div>
@@ -62,24 +63,145 @@
                 <div class="pb-20">
                     <table class="data-table table stripe hover nowrap">
                         <thead>
-                            <tr>
-                                <th class="table-plus datatable-nosort">No</th>
-                                <th>Judul Berita</th>
-                                <th>Isi</th>
-                                <th>Kategori</th>
-                                <th>Status</th>
-                                <th class="datatable-nosort">Action</th>
+                            <tr class="text-center">
+                                <th class="table-plus datatable-nosort" width="1px">No</th>
+                                <th width="5px">Judul Berita</th>
+                                <th width="5px">Isi</th>
+                                <th width="2px">Kategori</th>
+                                <th width="3px">Status</th>
+                                <th width="3px" class="datatable-nosort">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $i = 1; ?>
-                            <?php foreach ($berita as $user) : ?>
-                            <tr>
+                            <?php foreach ($berita as $blog) : ?>
+                            <tr class="text-center">
                                 <td class="table-plus"><?= $i++; ?></td>
-                                <td><?php echo word_limiter($user['judul_berita'], 10, '......') ?></td>
-                                <td><?php echo $user['isi_berita'] ?></td>
-                                <td><?php echo $user['kategori_berita'] ?></td>
-                                <td><?php echo $user['status'] ?></td>
+                                <td><?php echo word_limiter($blog->judul_berita, 2, '....'); ?></td>
+                                <td><?php echo word_limiter($blog->isi_berita, 3, '.....'); ?></td>
+                                <td><?php echo $blog->kategori_berita; ?></td>
+                                <td> <?php
+                                                $status = $blog->status;
+                                                if ($status == 0) {
+                                                    ?>
+
+                                    <span class="btn btn-outline-danger" data-toggle="modal"
+                                        data-target="#exampleModal<?= $blog->id; ?>">Non-Active</span>
+
+                                    <div class="modal fade" id="exampleModal<?= $blog->id; ?>" tabindex="-1"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Aktivisasi Berita
+                                                        Gereja</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form
+                                                        action="<?php echo base_url('admin/updateStatusBerita/' . $blog->id) ?>"
+                                                        method="POST">
+                                                        <?= csrf_field() ?>
+                                                        <input type="hidden" name="_method" value="_put">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <input type="hidden" name="id"
+                                                                    value="<?= $blog->id; ?>" />
+                                                                <div class="form-group">
+                                                                    <label for="status">Status</label>
+                                                                    <select class="form-control required" id="status"
+                                                                        name="status">
+                                                                        <option value="1"
+                                                                            <?php if ($blog->status == "1") echo "selected='selected'" ?>>
+                                                                            Active
+                                                                        </option>
+                                                                        <option value="0"
+                                                                            <?php if ($blog->status == "0") echo "selected='selected'" ?>>
+                                                                            Non Active
+                                                                        </option>
+
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Save
+                                                                changes</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <?php
+                                                } else { ?>
+                                        <span class="btn btn-outline-success" data-toggle="modal"
+                                            data-target="#exampleModalactive<?= $blog->id; ?>">Active</span>
+
+
+                                        <div class="modal fade" id="exampleModalactive<?= $blog->id; ?>" tabindex="-1"
+                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Aktivisasi
+                                                            Berita Gereja</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form
+                                                            action="<?php echo base_url('admin/updateStatusBerita/' . $blog->id) ?>"
+                                                            method="POST">
+                                                            <?= csrf_field() ?>
+                                                            <input type="hidden" name="_method" value="_put">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <input type="hidden" name="id"
+                                                                        value="<?= $blog->id; ?>" />
+                                                                    <div class="form-group">
+                                                                        <label for="status">Status</label>
+                                                                        <select class="form-control required"
+                                                                            id="status" name="status">
+
+                                                                            <option value="1"
+                                                                                <?php if ($blog->status == "1") echo "selected='selected'" ?>>
+                                                                                Active
+                                                                            </option>
+                                                                            <option value="0"
+                                                                                <?php if ($blog->status == "0") echo "selected='selected'" ?>>
+                                                                                Non Active
+                                                                            </option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save
+                                                                    changes</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <?php
+                                                    }
+                                                    ?>
+                                </td>
                                 <td>
                                     <div class="dropdown">
                                         <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle"
@@ -88,12 +210,15 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                                             <a class="dropdown-item"
-                                                href="<?php echo base_url('admin/detailJemaat/' . $user['id']); ?>"><i
+                                                href="<?php echo base_url('detailBerita/' . $blog->id); ?>"><i
                                                     class="dw dw-eye"></i> View</a>
+
                                             <a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-                                            <a class="dropdown-item"
-                                                href="<?php echo base_url('admin/deleteJemaat/' . $user['id']); ?>"><i
+
+                                            <a class="dropdown-item" data-toggle="modal" type="button"
+                                                data-target="#confirmation-modal<?= $blog->id; ?>"><i
                                                     class="DeleteJemaat dw dw-delete-3"></i>Delete</a>
+
                                         </div>
                                     </div>
                                 </td>
@@ -104,6 +229,48 @@
                 </div>
             </div>
             <!-- Simple Datatable End -->
-
         </div>
-        <?php $this->endSection(); ?>
+
+        <?php
+        foreach ($berita as $blog) :  ?>
+        <!-- Confirmation modal -->
+
+        <div class="modal fade" id="confirmation-modal<?= $blog->id; ?>" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center font-18">
+                        <h4 class="padding-top-30 mb-30 weight-500">
+                            Are you sure you want to Delete?<?= $blog->id; ?>
+                        </h4>
+
+                        <form action="<?php echo base_url('admin/deleteBerita/' . $blog->id); ?>" method="post">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="_method" value="_delete">
+                            <div class="padding-bottom-30 row" style="max-width: 170px; margin: 0 auto">
+                                <div class="col-6">
+                                    <button type="button"
+                                        class="btn btn-secondary border-radius-100 btn-block confirmation-btn"
+                                        data-dismiss="modal">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                    NO
+                                </div>
+                                <div class="col-6">
+                                    <button type="submit"
+                                        class="btn btn-primary border-radius-100 btn-block confirmation-btn">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                    YES
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>
+<?php $this->endSection(); ?>
+<!-- <?php echo base_url('admin/deleteJemaat/' . $blog->id); ?> -->

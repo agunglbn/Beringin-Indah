@@ -4,9 +4,9 @@ namespace App\Controllers;
 
 use App\Models\M_user;
 use App\Models\Jemaat;
-use App\Models\BeritaModel;
 use App\Models\Kategori;
 use App\Models\AuthGroups;
+use App\Models\Berita;
 use Myth\Auth\Models\UserModel;
 use CodeIgniter\Controller;
 use CodeIgniter\Session\Session;
@@ -22,7 +22,7 @@ class Admin extends BaseController
         $this->db = \Config\Database::connect();
         $this->builder = $this->db->table('users');
         $this->model = new M_user;
-        $this->berita = new BeritaModel;
+        $this->berita = new Berita;
         $this->jemaat = new Jemaat;
         $this->kategori = new Kategori;
         $this->validation = \Config\Services::validation();
@@ -88,7 +88,7 @@ class Admin extends BaseController
             return redirect()->back()->withInput();
         }
         // Ubah Url Title
-        $slug_username = url_title($this->request->getVar('username'), '-', true);
+        // $slug= url_title($this->request->getVar('username'), '-', true);
         // Jika Data Valid
         $this->model->insert([
             'username' => $this->request->getVar('username'),
@@ -105,9 +105,13 @@ class Admin extends BaseController
 
     public function jemaat()
     {
+
         $data = ([
             'title' => 'Data Jemaat HKBP Beringin Indah',
-            'jemaat'  => $this->jemaat->getJemaat(),
+            'jemaat'  => $this->jemaat->orderBy('nama_jemaat', 'asc') //ASC dan DESC   
+                ->findAll(), //     $userModel->where('status', 'active')
+            // ->orderBy('last_login', 'asc')
+            // ->findAll();
         ]);
         return view('Diakonia/data_jemaat', $data);
     }
@@ -185,6 +189,9 @@ class Admin extends BaseController
             'validation' => \Config\Services::validation(),
 
         ]);
+        if (empty($data['jemaat'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data' . $id . 'Tidak Ditemukan');
+        }
         // dd($data);
 
         return view('Diakonia/detail_jemaat', $data);
@@ -192,11 +199,18 @@ class Admin extends BaseController
 
     public function updateJemaat($id = 0)
     {
+        //Cek Email 
+        $email = $this->jemaat->find($id, ($this->request->getVar('email')));
+        if ($email['email'] == $this->request->getVar('email')) {
+            $rule_email = 'required|valid_email';
+        } else {
+            $rule_email = 'required|valid_email|is_unique[jemaat.email]';
+        }
 
         //Validasi 
         $rules = [
             'nama_jemaat' => 'required|alpha_numeric_space|min_length[3]|max_length[128]',
-            'email'    => 'is_unique[jemaat.email]',
+            'email'    => $rule_email,
             'nohp' => 'required|max_length[15]',
             'alamat' =>  'required|min_length[3]',
             'sektor'     => 'required',
@@ -214,7 +228,19 @@ class Admin extends BaseController
                 'required' => 'Nama jemaat tidak boleh kosong !!',
                 'min_length' => 'Minimal karakter 3 huruf !!',
                 'max_length' => 'Maximal Karakter 128 huruf !!'
-            ]
+            ],
+
+            'email' => [
+                'required' => 'Email Tidak Boleh Kosong !!',
+                'is_unique' => 'Email telah digunakan, gunakan email yang lain !!',
+                'valid_email' => 'Email yang digunakan tidak sesuai !!'
+            ],
+            'img' => [
+                'is_image' => 'Gambar tidak sesuai !!',
+                'max_size' => 'Ukuran gambar Maximal 2 Mb !!!',
+                'mime_in' => 'Gambar harus jpg/jpeg/png !!',
+            ],
+
         ];
 
 
@@ -244,6 +270,7 @@ class Admin extends BaseController
 
         $success =  $this->jemaat->update($id, [
             'nama_jemaat' => $this->request->getVar('nama_jemaat'),
+            'email' => $this->request->getVar('email'),
             'nohp' => $this->request->getVar('nohp'),
             'alamat' => $this->request->getVar('alamat'),
             'sektor' => $this->request->getVar('sektor'),
@@ -294,12 +321,12 @@ class Admin extends BaseController
         return view('admin/AddNewBerita', $data);
     }
 
-    public function addNewBerita()
+    public function TambahBerita()
     {
         // Validasi Form Data
         $rules = [
             'judul_berita' => 'required|alpha_numeric_space',
-            'isi_berita' => 'trim|required|alpha_numeric_space',
+            'isi_berita' => 'required',
             'kategori_berita' => 'required',
             'img' => 'uploaded[img]|max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
             'status' => 'required',
@@ -320,7 +347,7 @@ class Admin extends BaseController
             'img' => [
                 'uploaded' => 'Gambar tidak boleh kosong !!',
                 'max_size' => 'Ukuran gambar Maximal 2 Mb !!!',
-                'mime_in[img,image/jpeg,image/jpg,image/png]' => 'Gambar harus jpg/jpeg/png !!',
+                'mime_in' => 'Gambar harus jpg/jpeg/png !!',
             ],
             'status' => [
                 'required' => 'Status tidak boleh kosong !!',
@@ -331,32 +358,75 @@ class Admin extends BaseController
         if (!$this->validate($rules, $error)) {
             session()->setFlashdata('error', 'Data Berita Tidak Dapat Ditambahkan !!!');
             return redirect()->back()->withInput();
+        }
+        $img = $this->request->getFile('img');
+        $filename = $img->getRandomName();
+        $slug_username = url_title($this->request->getVar('judul_berita'), '-', true);
 
-            $img = $this->request->getFile('img');
-            $filename = $img->getRandomName();
+        // Kiri Field Database Kanan Field Name Form 
+        $success =  $this->berita->insert([
+            'username' => $this->request->getVar('username'),
+            'slug' => $slug_username,
+            'role' => $this->request->getVar('user'),
+            'judul_berita' => $this->request->getVar('judul_berita'),
+            'isi_berita' => $this->request->getVar('isi_berita'),
+            'kategori_berita' => $this->request->getVar('kategori_berita'),
+            'status' => $this->request->getVar('status'),
+            'img' => $filename,
+        ]);
+        $img->move('assets/vendors/img_berita/', $filename);
+        // $img->move('assets/vendors/img_berita/', $filename);
+        // $builder = $this->db->table("berita");
+        // $success = $builder->insert($data);
+        // $success = $this->berita->insert_berita($data);
+        if ($success) {
+            session()->setFlashdata('success', 'Data Berita Berhasil Ditambahkan!!');
+            return redirect()->to(base_url('/admin/berita'));
+        }
+    }
 
-            // Kiri Field Database Kanan Field Name Form 
-            $data = array(
-                'username' => $this->request->getVar('username'),
-                'user' => $this->request->getVar('user'),
-                'judul_berita' => $this->request->getVar('judul_berita'),
-                'isi_berita' => $this->request->getVar('isi_berita'),
-                'kategori_berita' => $this->request->getVar('judul_berita'),
-                'status' => $this->request->getVar('status'),
-                'created' => date("Y-m-d H:i:s"),
-                'modified' => date("Y-m-d H:i:s"),
-                'img' => $filename,
-            );
+    // Detail Berita 
+    public function detailBerita($id)
+    {
 
-            // $img->move('assets/vendors/img_berita/', $filename);
-            // $builder = $this->db->table("berita");
-            // $success = $builder->insert($data);
-            $img->move('assets/vendors/img_berita/', $filename);
-            $success = $this->berita->insert_berita($data);
-            if ($success) {
-                session()->setFlashdata('success', 'Data Berita Berhasil Di!!');
-                return redirect()->to(base_url('/admin/berita'));
-            }
+        $data = ([
+            'title' => 'Detail Berita',
+            'berita'  => $this->berita->detailBerita($id),
+            'kategori' => $this->kategori->findAll(),
+            'validation' => \Config\Services::validation(),
+
+        ]);
+        if (empty($data['berita'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data' . $id . 'Tidak Ditemukan');
+        }
+        // dd($data);
+
+        return view('Admin/detail_berita', $data);
+    }
+
+    public function deleteBerita($id = null)
+    {
+        $this->berita->delete($id);
+        session()->setFlashdata('success', 'Data Berita Berhasil Dihapus!!');
+        return redirect()->to('/admin/berita');
+    }
+    public function updateStatusBerita($id)
+    {
+
+        $rules = [
+            'status' => 'required',
+        ];
+        if (!$this->validate($rules)) {
+            session()->setFlashdata('error', 'Data Berita Tidak Dapat Diubah !!!');
+            return redirect()->back()->withInput();
+        }
+        $success = $this->berita->update($id, [
+            'status' => $this->request->getVar('status'),
+        ]);
+
+        if ($success) {
+            session()->setFlashdata('success', 'Data Berita Berhasil Diubah !!!');
+            return redirect()->to(base_url('/admin/berita'));
         }
     }
 }

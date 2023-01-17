@@ -54,6 +54,7 @@ $(function() {
     })
     <?php } ?>
 });
+CKEDITOR.replace('editor1');
 </script>
 
 

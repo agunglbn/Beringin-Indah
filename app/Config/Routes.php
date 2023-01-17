@@ -51,7 +51,12 @@ $routes->delete('/admin/(:num)', 'Admin::deleteJemaat/$1', ['filter' => 'role:ad
 // Berita
 $routes->get('/admin/berita', 'Admin::berita', ['filter' => 'role:admin']);
 $routes->get('/admin/formBerita', 'Admin::formBerita', ['filter' => 'role:admin']);
-$routes->post('/admin/addNewBerita', 'Admin::addNewBerita', ['filter' => 'role:admin']);
+$routes->post('/admin/TambahBerita', 'Admin::TambahBerita', ['filter' => 'role:admin']);
+$routes->get('/detailBerita/(:segment)', 'Admin::detailBerita/$1', ['filter' => 'role:admin']);
+$routes->delete('/admin/deleteBerita/(:num)', 'Admin::deleteBerita/$1', ['filter' => 'role:admin']);
+$routes->post('/admin/updateStatusBerita(:num)', 'Admin::updateStatusBerita/$1', ['filter' => 'role:admin']);
+
+
 
 
 

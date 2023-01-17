@@ -149,7 +149,8 @@
                                                             <label>Email</label>
                                                             <input
                                                                 class="form-control form-control-lg <?= $validation->hasError('email') ? 'is-invalid' : null ?>"
-                                                                name="email" type="email" value=""
+                                                                name="email" type="email"
+                                                                value="<?php echo $jemaat[0]['email']; ?>"
                                                                 placeholder="<?php echo $jemaat[0]['email']; ?>">
                                                             <?php if ($validation->hasError('email')) : ?>
                                                             <div class="invalid-feedback">
