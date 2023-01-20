@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
                         <div class="title">
-                            <h4>DataTable</h4>
+                            <h4>Data Berita</h4>
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
@@ -17,7 +17,7 @@
                                     <a href="index.html">Home</a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    DataTable
+                                    Data Berita
                                 </li>
                             </ol>
                         </nav>
@@ -213,7 +213,9 @@
                                                 href="<?php echo base_url('detailBerita/' . $blog->id); ?>"><i
                                                     class="dw dw-eye"></i> View</a>
 
-                                            <a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
+                                            <a class="dropdown-item"
+                                                href="<?php echo base_url('formUpdateBerita/' . $blog->id); ?>"><i
+                                                    class="dw dw-edit2"></i> Edit</a>
 
                                             <a class="dropdown-item" data-toggle="modal" type="button"
                                                 data-target="#confirmation-modal<?= $blog->id; ?>"><i
@@ -240,7 +242,7 @@
                 <div class="modal-content">
                     <div class="modal-body text-center font-18">
                         <h4 class="padding-top-30 mb-30 weight-500">
-                            Are you sure you want to Delete?<?= $blog->id; ?>
+                            Are you sure you want to Delete?
                         </h4>
 
                         <form action="<?php echo base_url('admin/deleteBerita/' . $blog->id); ?>" method="post">

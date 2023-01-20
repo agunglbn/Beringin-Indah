@@ -168,9 +168,14 @@
                         <div class="col-sm-12 col-md-10">
                             <select name="role"
                                 class="custom-select col-12 <?= $validation->hasError('role') ? 'is-invalid' : null ?>">
-                                <option value="0" disabled selected hidden>--Choice--</option>
-                                <option value="1">Admin</option>
-                                <option value="2">User</option>
+                                <?php foreach ($group_role as $role) :  ?>
+                                <option value="" disabled selected hidden>--Choice--</option>
+                                <option value="<?php echo $role['name']; ?>">
+                                    <?php echo $role['name']; ?>
+                                </option>
+
+                                <?php endforeach; ?>
+
                             </select>
                             <?php if ($validation->hasError('role')) : ?>
                             <div class="invalid-feedback">

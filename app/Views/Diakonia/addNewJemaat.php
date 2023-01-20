@@ -112,7 +112,7 @@
                         <div class="col-sm-12 col-md-10">
                             <input name="sektor" value="<?= set_value('sektor'); ?>"
                                 class="form-control <?= $validation->hasError('sektor') ? 'is-invalid' : null ?>"
-                                type="text" placeholder="Parataon" />
+                                type="text" placeholder="Sion" />
                             <?php if ($validation->hasError('sektor')) : ?>
                             <div class="invalid-feedback">
                                 <?= $validation->getError('sektor'); ?>
@@ -120,7 +120,28 @@
                             <?php endif; ?>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label class="col-sm-12 col-md-2 col-form-label">Kategori</label>
+                        <div class="col-sm-12 col-md-10">
+                            <select name="kategori"
+                                class="custom-select col-12 <?= $validation->hasError('kategori') ? 'is-invalid' : null ?>">
+                                <?php foreach ($kategori as $kat) :  ?>
+                                <option value="" disabled selected hidden>--Choice--</option>
+                                <option value="<?php echo $kat['nama_kategori']; ?>">
+                                    <?php echo $kat['nama_kategori']; ?>
+                                </option>
 
+                                <?php endforeach; ?>
+
+                            </select>
+                            <?php if ($validation->hasError('kategori')) : ?>
+                            <div class="invalid-feedback">
+                                <?= $validation->getError('kategori'); ?>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+
+                    </div>
                     <div class="form-group row">
                         <label class="col-sm-12 col-md-2 col-form-label">Telephone</label>
                         <div class="col-sm-12 col-md-10">

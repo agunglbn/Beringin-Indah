@@ -16,12 +16,13 @@ use Myth\Auth\Entities\User;
 class Admin extends BaseController
 {
 
-    protected $db, $builder, $model, $jemaat, $validation, $kategori, $berita;
+    protected $userModel, $db, $builder, $model, $jemaat, $validation, $kategori, $berita;
     public function __construct()
     {
         $this->db = \Config\Database::connect();
         $this->builder = $this->db->table('users');
         $this->model = new M_user;
+        $this->userModel = new UserModel;
         $this->berita = new Berita;
         $this->jemaat = new Jemaat;
         $this->kategori = new Kategori;
@@ -67,6 +68,7 @@ class Admin extends BaseController
         $data = [
             'title' => 'Add New User',
             'validation' => \Config\Services::validation(),
+            'group_role' => $this->model->groupRole(),
         ];
         return view('Admin/addNewUser', $data);
     }
@@ -88,9 +90,13 @@ class Admin extends BaseController
             return redirect()->back()->withInput();
         }
         // Ubah Url Title
-        // $slug= url_title($this->request->getVar('username'), '-', true);
+
+        // $slug = url_title($this->request->getVar('username'), '-', true);
+
         // Jika Data Valid
-        $this->model->insert([
+
+        $rule_role = $this->request->getVar('role');
+        $this->model->withGroup('user')->insert([
             'username' => $this->request->getVar('username'),
             'email' => $this->request->getVar('email'),
             'mobile' => $this->request->getVar('mobile'),
@@ -98,7 +104,18 @@ class Admin extends BaseController
             'fullname' => $this->request->getVar('fullname'),
             'password_hash' => password_hash('password_hash', PASSWORD_DEFAULT),
         ]);
-        return redirect()->to(base_url('/admin/newUser'))->with('success', 'Data User Berhasil Ditambahkan');
+        // $data = [
+        //     'username' => $this->request->getVar('username'),
+        //     'email' => $this->request->getVar('email'),
+        //     'mobile' => $this->request->getVar('mobile'),
+        //     'divisi' => $this->request->getVar('divisi'),
+        //     'fullname' => $this->request->getVar('fullname'),
+        //     'password_hash' => password_hash('password_hash', PASSWORD_DEFAULT),
+        // ];
+        // $user = $this->userModel
+        //     ->withGroup('admin')
+        //     ->insert($data);
+        return redirect()->to(base_url('/admin'))->with('success', 'Data User Berhasil Ditambahkan');
     }
 
     // Data Jemaat
@@ -121,6 +138,8 @@ class Admin extends BaseController
         $data = [
             'title' => 'Add New Jemaat',
             'validation' => \Config\Services::validation(),
+            'kategori' => $this->kategori->findAll(),
+
         ];
         return view('Diakonia/addNewJemaat', $data);
     }
@@ -132,6 +151,10 @@ class Admin extends BaseController
             'email'    => 'required|valid_email|is_unique[jemaat.email]',
             'nohp' => 'required|max_length[15]',
             'alamat' =>  'required|min_length[3]',
+            'kategori' => 'required',
+            'pekerjaan' => 'required',
+            // 'kepala_keluarga' =>  'required|alpha_numeric_space|min_length[3]|max_length[128]',
+            // 'nohp_kp' => 'required|max_length[15]',
             'sektor'     => 'required',
             'jk' => 'required',
             'pekerjaan' => 'required',
@@ -145,15 +168,20 @@ class Admin extends BaseController
                 'required' => 'Nama jemaat tidak boleh kosong !!',
                 'min_length' => 'Minimal karakter 3 huruf !!',
                 'max_length' => 'Maximal Karakter 128 huruf !!'
-            ]
+            ],
+            'email' => [
+                'required' => 'Email tidak boleh kosong !!',
+                'valid_email' => 'Email tidak sesuai ketentuan !!',
+                'is_unique' => 'Email telah digunakan !!'
+            ],
         ];
         if (!$this->validate($rules, $error)) {
-            session()->setFlashdata('error', 'Data User Tidak Dapat Ditambahkan !!!');
+            session()->setFlashdata('error', 'Data Jemaat Tidak Dapat Ditambahkan !!!');
             return redirect()->back()->withInput();
         }
 
         // Ubah Url Title
-        $slug_username = url_title($this->request->getVar('nama_jemaat'), '-', true);
+        // $slug_username = url_title($this->request->getVar('nama_jemaat'), '-', true);
         // Jika Data Valid
         $img = $this->request->getFile('img');
         $filename = $img->getRandomName();
@@ -250,13 +278,18 @@ class Admin extends BaseController
         }
 
         // Ubah Url Title
-        $slug_username = url_title($this->request->getVar('nama_jemaat'), '-', true);
+        // $slug_username = url_title($this->request->getVar('nama_jemaat'), '-', true);
+
         // Jika Data Valid
         $img = $this->request->getFile('img');
-
+        $rule_img = $this->jemaat->find($id);
         // Validasi Gambar diubah atau tidak
         if ($img->getError() == 4) {
             $filename = $this->request->getVar('gambar_lama');
+        } else if ($rule_img['img'] == null) {
+            $filename = $img->getRandomName();
+            // Arahkan Gambar Ke Direktori
+            $img->move('assets/vendors/images', $filename);
         } else {
             $filename = $img->getRandomName();
 
@@ -426,6 +459,95 @@ class Admin extends BaseController
 
         if ($success) {
             session()->setFlashdata('success', 'Data Berita Berhasil Diubah !!!');
+            return redirect()->to(base_url('/admin/berita'));
+        }
+    }
+
+
+    public function formUpdateBerita($id = null)
+    {
+        $data = ([
+            'title' => 'Detail Berita',
+            'berita'  =>  $this->berita->detailBerita($id),
+            'kategori' => $this->kategori->findAll(),
+            'validation' => $this->validation,
+
+        ]);
+        if (empty($data['berita'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data' . $id . 'Tidak Ditemukan');
+        }
+        // dd($data);
+
+        return view('Admin/updateBerita', $data);
+    }
+
+    public function updateBerita($id = 0)
+    {
+        //Validasi 
+        if (!$this->validate(
+            [
+                'judul_berita' => [
+                    'rules' => 'required|alpha_numeric_punct',
+                    'errors' => [
+                        'required' => 'Judul Berita Data tidak boleh kosong !',
+                        'alpha_numeric_punct' => 'Gunakan Tanda Penghubung yang sesuai !'
+                    ]
+                ],
+                'isi_berita' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Isi Berita Tidak Boleh Kosong !'
+                    ],
+                ],
+                'img' => [
+                    'rules' => 'max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
+                    'errors' => [
+                        'max_size' => 'Ukuran gambar tidak boleh melebihi 2Mb !',
+                        'is_image' => 'Jenis file tidak sesuai gunakan format jpg/jpeg/png !',
+                        'mime_in' => 'File tidak sesuai format ketentuan !'
+                    ]
+                ]
+
+            ]
+        )) {
+            session()->setFlashdata('error', 'Data Berita Tidak Dapat Diubah !!!');
+            return redirect()->back()->withInput();
+        }
+
+        $img = $this->request->getFile('img');
+        $rule_img = $this->berita->find($id);
+
+        // Validasi Gambar diubah atau tidak
+        if ($img->getError() == 4) {
+            $filename = $this->request->getVar('gambar_lama');
+        } else if ($rule_img['img'] == null) {
+
+            $filename = $img->getRandomName();
+            // Arahkan Gambar Ke Direktori
+            $img->move('assets/vendors/img_berita', $filename);
+        } else {
+            $filename = $img->getRandomName();
+
+            // Arahkan Gambar Ke Direktori
+            $img->move('assets/vendors/img_berita', $filename);
+
+            // Hapus Gambar Lama
+            unlink('assets/vendors/img_berita/' . $this->request->getPost('gambar_lama'));
+        }
+
+
+        $success =  $this->berita->update($id, [
+            'usename' => $this->request->getVar('username'),
+            'judul_berita' => $this->request->getVar('judul_berita'),
+            'isi_berita' => $this->request->getVar('isi_berita'),
+            'kategori_berita' => $this->request->getVar('kategori_berita'),
+            'status' => $this->request->getVar('status'),
+            'img' => $filename,
+
+        ]);
+
+        if ($success) {
+            session()->setFlashdata('success', 'Data Berita Berhasil Diubah!!');
             return redirect()->to(base_url('/admin/berita'));
         }
     }

@@ -254,7 +254,7 @@
                                                                 class="form-control form-control-lg <?= $validation->hasError('sektor') ? 'is-invalid' : null ?>"
                                                                 name="sektor"
                                                                 value="<?php echo $jemaat[0]['sektor']; ?>" type="text"
-                                                                placeholder="Mahasiswa">
+                                                                placeholder="Nazaret">
                                                             <?php if ($validation->hasError('sektor')) : ?>
                                                             <div class="invalid-feedback">
                                                                 <?= $validation->getError('sektor'); ?>

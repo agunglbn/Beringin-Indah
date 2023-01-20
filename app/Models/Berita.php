@@ -27,12 +27,12 @@ class Berita extends Model
     protected $deletedField  = '';
 
 
-    protected $db;
-    public function __construct()
-    {
-        $this->db = db_connect();
-    }
-    public function getBerita($slug = false)
+    // protected $db;
+    // public function __construct()
+    // {
+    //     $this->db = db_connect();
+    // }
+    public function getBerita($id = false)
     {
 
         $builder = $this->db->table('berita');
@@ -40,7 +40,7 @@ class Berita extends Model
         return $query->getResult();
     }
 
-    public function detailBerita($id = null)
+    public function detailBerita($id = 0)
     {
         // if ($slug = false) {
         //     return $this->findAll();

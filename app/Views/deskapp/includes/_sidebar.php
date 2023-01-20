@@ -17,10 +17,14 @@
                         <span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
                     </a>
                 </li>
-                <li>
-                    <a href="<?php echo base_url('user'); ?>" class="dropdown-toggle no-arrow">
+                <li class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon dw dw-money-1"></span><span class="mtext">Keuangan</span>
                     </a>
+                    <ul class="submenu">
+                        <li><a href="<?php echo base_url('user'); ?>">Kas</a></li>
+                        <li><a href="<?php echo base_url('deskapp/tables/datatable'); ?>">Pengeluaran</a></li>
+                    </ul>
                 </li>
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">

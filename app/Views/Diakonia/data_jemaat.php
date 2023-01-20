@@ -67,7 +67,7 @@
                                 <th>Nama Jemaat</th>
                                 <th>NO HP</th>
                                 <th>Alamat</th>
-                                <th>Pekerjaan</th>
+                                <th>Kategori</th>
                                 <th>Sektor</th>
                                 <th class="datatable-nosort">Action</th>
                             </tr>
@@ -80,7 +80,7 @@
                                 <td><?php echo $user['nama_jemaat'] ?></td>
                                 <td><?php echo $user['nohp'] ?></td>
                                 <td><?php echo $user['alamat'] ?></td>
-                                <td><?php echo $user['pekerjaan'] ?></td>
+                                <td><?php echo $user['kategori'] ?></td>
                                 <td><?php echo $user['sektor'] ?></td>
                                 <td>
                                     <div class="dropdown">
@@ -93,8 +93,8 @@
                                                 href="<?php echo base_url('admin/detailJemaat/' . $user['id']); ?>"><i
                                                     class="dw dw-eye"></i> View</a>
                                             <a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-                                            <a class="dropdown-item"
-                                                href="<?php echo base_url('admin/deleteJemaat/' . $user['id']); ?>"><i
+                                            <a class="dropdown-item" data-toggle="modal" type="button"
+                                                data-target="#confirmation-modal<?= $user['id']; ?>"><i
                                                     class="DeleteJemaat dw dw-delete-3"></i>Delete</a>
                                         </div>
                                     </div>
@@ -108,4 +108,46 @@
             <!-- Simple Datatable End -->
 
         </div>
-        <?php $this->endSection(); ?>
+        <?php
+        foreach ($jemaat as $user) :  ?>
+        <!-- Confirmation modal -->
+
+        <div class="modal fade" id="confirmation-modal<?= $user['id']; ?>" tabindex="-1" role="dialog"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center font-18">
+                        <h4 class="padding-top-30 mb-30 weight-500">
+                            Are you sure you want to Delete?
+                        </h4>
+
+                        <form action="<?php echo base_url('admin/deleteJemaat/' . $user['id']); ?>" method="post">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="_method" value="_delete">
+                            <div class="padding-bottom-30 row" style="max-width: 170px; margin: 0 auto">
+                                <div class="col-6">
+                                    <button type="button"
+                                        class="btn btn-secondary border-radius-100 btn-block confirmation-btn"
+                                        data-dismiss="modal">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                    NO
+                                </div>
+                                <div class="col-6">
+                                    <button type="submit"
+                                        class="btn btn-primary border-radius-100 btn-block confirmation-btn">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                    YES
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>
+<?php $this->endSection(); ?>
