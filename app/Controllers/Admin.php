@@ -551,4 +551,21 @@ class Admin extends BaseController
             return redirect()->to(base_url('/admin/berita'));
         }
     }
+
+    //  Keuangan //
+
+    public function kas(){
+        $data = ([
+            'title' => 'Data Kas Beringin Indah',
+            'jemaat'  => $this->kas->orderBy('nama_jemaat', 'asc') //ASC dan DESC   
+            ->findAll(),
+            'kategori' => $this->kategori->findAll(),
+            'validation' => $this->validation,
+
+        ]);
+
+
+    }
+
+
 }

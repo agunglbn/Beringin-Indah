@@ -56,7 +56,7 @@ $routes->get('/detailBerita/(:segment)', 'Admin::detailBerita/$1', ['filter' => 
 $routes->delete('/admin/deleteBerita/(:num)', 'Admin::deleteBerita/$1', ['filter' => 'role:admin']);
 $routes->post('/admin/updateStatusBerita(:num)', 'Admin::updateStatusBerita/$1', ['filter' => 'role:admin']);
 $routes->get('/formUpdateBerita/(:segment)', 'Admin::formUpdateBerita/$1', ['filter' => 'role:admin']);
-$routes->post('/admin/updateBerita(:segment)', 'Admin::updateStatusBerita/$1', ['filter' => 'role:admin']);
+$routes->post('/admin/updateBerita(:segment)', 'Admin::updateBerita/$1', ['filter' => 'role:admin']);
 
 
 
