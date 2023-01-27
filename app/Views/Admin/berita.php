@@ -61,7 +61,8 @@
                 </div>
                 <?php endif; ?> -->
                 <div class="pb-20">
-                    <table class="data-table table stripe hover nowrap">
+                    <table class="data-table table stripe hover nowrap table-bordered">
+                        <!-- <table class="table hover multiple-select-row data-table-export nowrap"> Membuat Option Export-->
                         <thead>
                             <tr class="text-center">
                                 <th class="table-plus datatable-nosort" width="1px">No</th>

@@ -17,6 +17,8 @@
 <script src="<?php echo base_url(); ?>/assets/vendors/scripts/script.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/vendors/scripts/process.js"></script>
 <script src="<?php echo base_url(); ?>/assets/vendors/scripts/layout-settings.js"></script>
+<!-- <script src="<?php echo base_url(); ?>/assets/src/plugins/jquery-steps/jquery.steps.js"></script>
+<script src="<?php echo base_url(); ?>/assets/vendors/scripts/steps-setting.js"></script> -->
 <script src="<?php echo base_url(); ?>/assets/src/plugins/datatables/js/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
 <script src="<?php echo base_url(); ?>/assets/src/plugins/datatables/js/dataTables.responsive.min.js"></script>
@@ -54,7 +56,6 @@ $(function() {
     })
     <?php } ?>
 });
-CKEDITOR.replace('editor1');
 </script>
 
 

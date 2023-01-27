@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\M_user;
 use App\Models\Jemaat;
 use App\Models\Kategori;
+use App\Models\Keuangan;
 use App\Models\AuthGroups;
 use App\Models\Berita;
 use Myth\Auth\Models\UserModel;
@@ -12,16 +13,20 @@ use CodeIgniter\Controller;
 use CodeIgniter\Session\Session;
 use Myth\Auth\Config\Auth as AuthConfig;
 use Myth\Auth\Entities\User;
+use Myth\Auth\Password;
 
 class Admin extends BaseController
 {
+    protected $session;
 
-    protected $userModel, $db, $builder, $model, $jemaat, $validation, $kategori, $berita;
+    protected $userModel, $keuangan, $db, $builder, $model, $jemaat, $validation, $kategori, $berita;
     public function __construct()
     {
+
         $this->db = \Config\Database::connect();
         $this->builder = $this->db->table('users');
         $this->model = new M_user;
+        $this->keuangan = new Keuangan;
         $this->userModel = new UserModel;
         $this->berita = new Berita;
         $this->jemaat = new Jemaat;
@@ -35,6 +40,7 @@ class Admin extends BaseController
 
     public function index()
     {
+
         $data['title'] = 'Data User';
         // $users['users'] = new \Myth\Auth\Models\UserModel();
         // $data['users'] = $users->findAll();
@@ -96,13 +102,14 @@ class Admin extends BaseController
         // Jika Data Valid
 
         $rule_role = $this->request->getVar('role');
-        $this->model->withGroup('user')->insert([
+        $this->model->withGroup($rule_role)->insert([
             'username' => $this->request->getVar('username'),
             'email' => $this->request->getVar('email'),
             'mobile' => $this->request->getVar('mobile'),
             'divisi' => $this->request->getVar('divisi'),
             'fullname' => $this->request->getVar('fullname'),
-            'password_hash' => password_hash('password_hash', PASSWORD_DEFAULT),
+            'password_hash' => Password::hash($this->request->getVar('password_hash')),
+            'active' => 1
         ]);
         // $data = [
         //     'username' => $this->request->getVar('username'),
@@ -118,6 +125,14 @@ class Admin extends BaseController
         return redirect()->to(base_url('/admin'))->with('success', 'Data User Berhasil Ditambahkan');
     }
 
+    // Delete User 
+    function DeleteUser($id)
+    {
+        $data['user'] = $this->model->where('id', $id)->delete();
+        // $jemaat = $this->jemaat->find($id);
+        // $this->jemaat->delete($id);
+        return redirect()->back()->with('success', 'Data Success be Delete !!');
+    }
     // Data Jemaat
 
     public function jemaat()
@@ -129,16 +144,20 @@ class Admin extends BaseController
                 ->findAll(), //     $userModel->where('status', 'active')
             // ->orderBy('last_login', 'asc')
             // ->findAll();
+
         ]);
         return view('Diakonia/data_jemaat', $data);
     }
 
     public function newJemaat()
     {
+        $builder = $this->db->table('sektor');
+        $query = $builder->get()->getResult();
         $data = [
             'title' => 'Add New Jemaat',
             'validation' => \Config\Services::validation(),
             'kategori' => $this->kategori->findAll(),
+            'sektor' => $query,
 
         ];
         return view('Diakonia/addNewJemaat', $data);
@@ -430,7 +449,7 @@ class Admin extends BaseController
 
         ]);
         if (empty($data['berita'])) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data' . $id . 'Tidak Ditemukan');
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data' . $id . 'NOT FOUND !!');
         }
         // dd($data);
 
@@ -440,7 +459,7 @@ class Admin extends BaseController
     public function deleteBerita($id = null)
     {
         $this->berita->delete($id);
-        session()->setFlashdata('success', 'Data Berita Berhasil Dihapus!!');
+        session()->setFlashdata('success', 'News Data Success Deleted!!');
         return redirect()->to('/admin/berita');
     }
     public function updateStatusBerita($id)
@@ -450,7 +469,7 @@ class Admin extends BaseController
             'status' => 'required',
         ];
         if (!$this->validate($rules)) {
-            session()->setFlashdata('error', 'Data Berita Tidak Dapat Diubah !!!');
+            session()->setFlashdata('error', 'News Data Cannot Be Changed !!!');
             return redirect()->back()->withInput();
         }
         $success = $this->berita->update($id, [
@@ -458,7 +477,7 @@ class Admin extends BaseController
         ]);
 
         if ($success) {
-            session()->setFlashdata('success', 'Data Berita Berhasil Diubah !!!');
+            session()->setFlashdata('success', 'News Data Changed Success !!!');
             return redirect()->to(base_url('/admin/berita'));
         }
     }
@@ -510,7 +529,7 @@ class Admin extends BaseController
 
             ]
         )) {
-            session()->setFlashdata('error', 'Data Berita Tidak Dapat Diubah !!!');
+            session()->setFlashdata('error', 'News Data Cannot Be Changed !!!');
             return redirect()->back()->withInput();
         }
 
@@ -547,25 +566,158 @@ class Admin extends BaseController
         ]);
 
         if ($success) {
-            session()->setFlashdata('success', 'Data Berita Berhasil Diubah!!');
+            session()->setFlashdata('success', 'News Data Changed Success!!');
             return redirect()->to(base_url('/admin/berita'));
         }
     }
 
     //  Keuangan //
 
-    public function kas(){
+    public function kas()
+    {
+
+        // $data['user'] = $session->getWhere('user', ['username' => $session->logged_in('username')])->row_array();
+        //  $session->set('user', ['username' => 'username']);
+        // $data['user'] = $this->keuangan->getWhere(['username' => $this->session->set('username')])->getRow();
+        // $data['user'] = $this->db->table('user')->getWhere(['username' => $userData])->getRow();
         $data = ([
             'title' => 'Data Kas Beringin Indah',
-            'jemaat'  => $this->kas->orderBy('nama_jemaat', 'asc') //ASC dan DESC   
-            ->findAll(),
+            'keuangan'  => $this->keuangan->orderBy('username', 'asc') //ASC dan DESC   
+                ->findAll(),
+            // 'keuangan'  => $this->keuangan->where(['username' => user()->username])->orderBy('username', 'asc') //ASC dan DESC   
+            //     ->findAll(),
+
             'kategori' => $this->kategori->findAll(),
             'validation' => $this->validation,
 
         ]);
-
-
+        return view('Admin/keuangan', $data);
     }
 
+    public function TambahKhas()
+    {
 
+        //Validasi 
+        if (!$this->validate(
+            [
+                'jenis_khas' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Silahkan Piliha Salah Satu !',
+                    ]
+                ],
+                'deskripsi' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Data Tidak Boleh Kosong !'
+                    ],
+                ],
+                'nominal' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Nilai Tidak Boleh Kosong !'
+                    ],
+                ],
+                'tanggal' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Tanggal Tidak Boleh Kosong !'
+                    ],
+                ],
+                // 'img' => [
+                //     'rules' => 'max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
+                //     'errors' => [
+                //         'max_size' => 'Ukuran gambar tidak boleh melebihi 2Mb !',
+                //         'is_image' => 'Jenis file tidak sesuai gunakan format jpg/jpeg/png !',
+                //         'mime_in' => 'File tidak sesuai format ketentuan !'
+                //     ]
+                // ]
+
+            ]
+        )) {
+            session()->setFlashdata('error', 'Data cannot be added !!!');
+            return redirect()->back()->withInput();
+        }
+        //<?php echo number_format($khas['nominal'], 0, ',', '.'); --> nampilkan Data Number
+        $success =  $this->keuangan->insert([
+            'username' => $this->request->getVar('username'),
+            'fullname' => $this->request->getVar('fullname'),
+            'jenis_khas' => $this->request->getVar('jenis_khas'),
+            'deskripsi' => $this->request->getVar('deskripsi'),
+            'nominal' => $this->request->getVar('nominal'),
+            'tanggal' => $this->request->getVar('tanggal'),
+        ]);
+
+        if ($success) {
+            session()->setFlashdata('success', 'Data Success be added !!!');
+            return redirect()->to(base_url('/Kas'));
+        }
+    }
+
+    public function UpdateKas($id)
+    {
+        //Validasi 
+        if (!$this->validate(
+            [
+                'jenis_khas' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Silahkan Piliha Salah Satu !',
+                    ]
+                ],
+                'deskripsi' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Data Tidak Boleh Kosong !'
+                    ],
+                ],
+                'nominal' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Nilai Tidak Boleh Kosong !'
+                    ],
+                ],
+                'tanggal' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Tanggal Tidak Boleh Kosong !'
+                    ],
+                ],
+                // 'img' => [
+                //     'rules' => 'max_size[img,2064]|is_image[img]|mime_in[img,image/jpeg,image/jpg,image/png]',
+                //     'errors' => [
+                //         'max_size' => 'Ukuran gambar tidak boleh melebihi 2Mb !',
+                //         'is_image' => 'Jenis file tidak sesuai gunakan format jpg/jpeg/png !',
+                //         'mime_in' => 'File tidak sesuai format ketentuan !'
+                //     ]
+                // ]
+
+            ]
+        )) {
+            session()->setFlashdata('error', 'Data cannot be Updated !!');
+            return redirect()->back()->withInput();
+        }
+        //<?php echo number_format($khas['nominal'], 0, ',', '.'); --> nampilkan Data Number
+        $success =  $this->keuangan->update($id, [
+            'username' => $this->request->getVar('username'),
+            'fullname' => $this->request->getVar('fullname'),
+            'jenis_khas' => $this->request->getVar('jenis_khas'),
+            'deskripsi' => $this->request->getVar('deskripsi'),
+            'nominal' => $this->request->getVar('nominal'),
+            'tanggal' => $this->request->getVar('tanggal'),
+        ]);
+
+        if ($success) {
+            session()->setFlashdata('success', 'Data Success be Updated !!');
+            return redirect()->to(base_url('/Kas'));
+        }
+    }
+
+    public function deleteKas($id)
+    {
+        $data['kas'] = $this->keuangan->where('id', $id)->delete();
+        // $jemaat = $this->jemaat->find($id);
+        // $this->jemaat->delete($id);
+        return redirect()->back()->with('success', 'Data Success be Delete !!');
+    }
 }

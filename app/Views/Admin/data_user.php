@@ -77,7 +77,9 @@
                                                 href="<?= base_url('admin/' . $user->userid); ?>"><i
                                                     class="dw dw-eye"></i> View</a>
                                             <a class="dropdown-item" href="#"><i class="dw dw-edit2"></i> Edit</a>
-                                            <a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i> Delete</a>
+                                            <a class="dropdown-item"
+                                                href="<?= base_url('admin/DeleteUser/' . $user->userid); ?>"><i
+                                                    class="dw dw-delete-3"></i> Delete</a>
                                         </div>
                                     </div>
                                 </td>

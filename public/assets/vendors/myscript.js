@@ -13,27 +13,32 @@
 //                 }
 //             )
 //         }
-$(document).ready(function () {
-  $('.DeleteJemaat').click(function (e) {
-    e.prevenDefault();
-    var id = $($his).val();
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire(
-          'Deleted!',
-          'Your file has been deleted.',
-          'success'
-        )
-      }
-    })
 
-  })
+CKEDITOR.replace('editor1');
+
+
+/* Dengan Rupiah */
+var dengan_rupiah = document.getElementById('jumlah_pemasukan');
+dengan_rupiah.addEventListener('keyup', function(e)
+{
+    dengan_rupiah.value = formatRupiah(this.value, ' ');
 });
+
+/* Fungsi */
+function formatRupiah(angka, prefix)
+{
+    var number_string = angka.replace(/[^,\d]/g, '').toString(),
+        split    = number_string.split(','),
+        sisa     = split[0].length % 3,
+        rupiah     = split[0].substr(0, sisa),
+        ribuan     = split[0].substr(sisa).match(/\d{3}/gi);
+        
+    if (ribuan) {
+        separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+    }
+    
+    rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+    return prefix == undefined ? rupiah : (rupiah ? '' + rupiah : '');
+}
+/* Tanpa Rupiah */

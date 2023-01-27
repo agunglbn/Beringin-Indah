@@ -36,19 +36,23 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
+
+// Tambah User Admin
 $routes->get('/', 'User::index');
 $routes->get('/admin', 'Admin::index', ['filter' => 'role:admin']);
 $routes->get('/admin/index', 'Admin::index', ['filter' => 'role:admin']);
 $routes->get('/admin/(:num)', 'Admin::detailUser/$1', ['filter' => 'role:admin']);
 $routes->get('/admin/newUser', 'Admin::newUser', ['filter' => 'role:admin']);
 $routes->post('/admin/tambah', 'Admin::tambah', ['filter' => 'role:admin']);
-// Jemaat
-$routes->get('/admin/jemaat', 'Admin::jemaat', ['filter' => 'role:admin']);
-$routes->post('/admin/addNewJemaat', 'Admin::addNewJemaat', ['filter' => 'role:admin']);
-$routes->get('/admin/(:num)', 'Admin::detailJemaat/$1', ['filter' => 'role:admin']);
-$routes->post('/admin/(:num)', 'Admin::updateJemaat/$1', ['filter' => 'role:admin']);
-$routes->delete('/admin/(:num)', 'Admin::deleteJemaat/$1', ['filter' => 'role:admin']);
-// Berita
+$routes->post('/admin/DeleteUser/(:num)', 'Admin::DeleteUser/$1', ['filter' => 'role:admin']);
+// Jemaat Diakonia
+$routes->get('/admin/jemaat', 'Admin::jemaat', ['filter' => 'role:admin,diakonia']);
+$routes->get('/admin/newJemaat', 'Admin::newJemaat', ['filter' => 'role:admin,diakonia']);
+$routes->post('/admin/addNewJemaat', 'Admin::addNewJemaat', ['filter' => 'role:admin,diakonia']);
+$routes->get('/admin/(:num)', 'Admin::detailJemaat/$1', ['filter' => 'role:admin,diakonia']);
+$routes->post('/admin/(:num)', 'Admin::updateJemaat/$1', ['filter' => 'role:admin,diakonia']);
+$routes->delete('/admin/(:num)', 'Admin::deleteJemaat/$1', ['filter' => 'role:admin,diakonia']);
+// Berita Admin
 $routes->get('/admin/berita', 'Admin::berita', ['filter' => 'role:admin']);
 $routes->get('/admin/formBerita', 'Admin::formBerita', ['filter' => 'role:admin']);
 $routes->post('/admin/TambahBerita', 'Admin::TambahBerita', ['filter' => 'role:admin']);
@@ -57,6 +61,18 @@ $routes->delete('/admin/deleteBerita/(:num)', 'Admin::deleteBerita/$1', ['filter
 $routes->post('/admin/updateStatusBerita(:num)', 'Admin::updateStatusBerita/$1', ['filter' => 'role:admin']);
 $routes->get('/formUpdateBerita/(:segment)', 'Admin::formUpdateBerita/$1', ['filter' => 'role:admin']);
 $routes->post('/admin/updateBerita(:segment)', 'Admin::updateBerita/$1', ['filter' => 'role:admin']);
+// Keuangan Admin
+$routes->get('/admin/Kas', 'Admin::kas', ['filter' => 'role:admin']);
+$routes->get('/Kas', 'Admin::kas', ['filter' => 'role:admin']);
+$routes->post('/admin/TambahKhas', 'Admin::TambahKhas', ['filter' => 'role:admin']);
+$routes->get('/detailKas/(:num)', 'Admin::detailKas/$1', ['filter' => 'role:admin']);
+$routes->post('/admin/UpdateKas(:segment)', 'Admin::UpdateKas/$1', ['filter' => 'role:admin']);
+$routes->delete('/admin/deleteKas/(:num)', 'Admin::deleteKas/$1', ['filter' => 'role:admin']);
+
+
+
+
+
 
 
 

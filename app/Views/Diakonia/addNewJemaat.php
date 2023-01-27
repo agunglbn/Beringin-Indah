@@ -110,9 +110,17 @@
                     <div class="form-group row">
                         <label class="col-sm-12 col-md-2 col-form-label">Sektor</label>
                         <div class="col-sm-12 col-md-10">
-                            <input name="sektor" value="<?= set_value('sektor'); ?>"
-                                class="form-control <?= $validation->hasError('sektor') ? 'is-invalid' : null ?>"
-                                type="text" placeholder="Sion" />
+                            <select name="sektor"
+                                class="custom-select col-12 <?= $validation->hasError('kategori') ? 'is-invalid' : null ?>">
+                                <?php foreach ($sektor as $sek) :  ?>
+                                <option value="" disabled selected hidden>--Choice--</option>
+                                <option value="<?php echo $sek->nama_sektor; ?>">
+                                    <?php echo $sek->nama_sektor; ?>
+                                </option>
+
+                                <?php endforeach; ?>
+
+                            </select>
                             <?php if ($validation->hasError('sektor')) : ?>
                             <div class="invalid-feedback">
                                 <?= $validation->getError('sektor'); ?>

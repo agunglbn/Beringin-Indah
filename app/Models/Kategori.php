@@ -15,4 +15,13 @@ class Kategori extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = ['nama_kategori'];
+
+
+
+    // public function getSektor()
+    // {
+    //     $builder = $this->db->table('sekWtor');
+    //     $query = $builder->get();
+    //     return $query->getResult();
+    // }
 }

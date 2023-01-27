@@ -30,7 +30,8 @@
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
-    <script src="<?php echo base_url('') ?>/assets/node_modules/node_modules/ckeditor4/ckeditor.js"></script>
+    <script src="<?php echo base_url() ?>/assets/node_modules/node_modules/ckeditor4/ckeditor.js"></script>
+
     <script>
     window.dataLayer = window.dataLayer || [];
 
@@ -282,7 +283,9 @@
     </div>
     <!-- Sidebar -->
     <?= $this->include('deskapp/includes/_sidebar') ?>
+
     <!-- Main Content  -->
     <?= $this->renderSection('main-content'); ?>
+
     <!-- Footer -->
     <?= $this->include('deskapp/includes/_footer') ?>

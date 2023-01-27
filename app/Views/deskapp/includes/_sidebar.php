@@ -17,15 +17,8 @@
                         <span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
                     </a>
                 </li>
-                <li class="dropdown">
-                    <a href="javascript:;" class="dropdown-toggle">
-                        <span class="micon dw dw-money-1"></span><span class="mtext">Keuangan</span>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="<?php echo base_url('user'); ?>">Kas</a></li>
-                        <li><a href="<?php echo base_url('deskapp/tables/datatable'); ?>">Pengeluaran</a></li>
-                    </ul>
-                </li>
+                <?php if (in_groups('parataon')) : ?>
+                <?php elseif (in_groups('admin')) : ?>
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon icon-copy ti-package"></span><span class="mtext">Parataon</span>
@@ -35,6 +28,9 @@
                         <li><a href="<?php echo base_url('deskapp/tables/datatable'); ?>">Administrasi</a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
+                <?php if (in_groups('diakonia')) : ?>
+                <?php elseif (in_groups('admin')) : ?>
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon icon-copy ti-server"></span><span class="mtext">Diakonia</span>
@@ -44,6 +40,7 @@
                         <li><a href="<?php echo base_url('deskapp/tables/datatable'); ?>">Administrasi</a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon icon-copy fa fa-group"></span><span class="mtext">Naposo</span>
@@ -62,12 +59,19 @@
                         <li><a href="<?php echo base_url('deskapp/tables/datatable'); ?>">Administrasi</a></li>
                     </ul>
                 </li>
+
                 <?php if (in_groups('admin')) : ?>
                 <li>
                     <a href="<?php echo base_url('admin/berita'); ?>" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-book1"></span><span class="mtext">Berita</span>
                     </a>
                 </li>
+
+                <li>
+                    <a href="<?php echo base_url('Kas'); ?>" class="dropdown-toggle no-arrow">
+                        <span class="micon dw dw-money-1"></span><span class="mtext">Keuangan</span> </a>
+                </li>
+
                 <li>
                     <a href="<?php echo base_url('admin'); ?>" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-add-user"></span><span class="mtext">User Management</span>

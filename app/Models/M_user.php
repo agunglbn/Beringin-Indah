@@ -25,7 +25,7 @@ class M_user extends Model
         return $this->db->table('users')->insert($data);
     }
 
-    public function withGroup(string $groupName)
+    public function withGroup(String $groupName)
     {
         $group = $this->db->table('auth_groups')->where('name', $groupName)->get()->getFirstRow();
 

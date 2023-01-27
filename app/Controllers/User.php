@@ -15,8 +15,12 @@ class User extends BaseController
         } elseif (in_groups('admin')) {
             $data['title'] = 'Dashboard Admin';
             return view('Admin/dashboard', $data);
+        } elseif (in_groups('parataon')) {
+            $data['title'] = 'Dashboard User';
+            return view('User/dashboard', $data);
         } else {
-            return view('deskapp/login');
+            $data['title'] = 'Dashboard User';
+            return view('User/dashboard', $data);
         }
     }
     public function profile()
