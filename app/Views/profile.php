@@ -160,14 +160,7 @@
                                                             <label>Address</label>
                                                             <textarea class="form-control"></textarea>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label>Visa Card Number</label>
-                                                            <input class="form-control form-control-lg" type="text">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Paypal ID</label>
-                                                            <input class="form-control form-control-lg" type="text">
-                                                        </div>
+
                                                         <div class="form-group">
                                                             <div class="custom-control custom-checkbox mb-5">
                                                                 <input type="checkbox" class="custom-control-input"
