@@ -175,7 +175,7 @@
                         <span class="user-name"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                        <a class="dropdown-item" href="<?php echo base_url('User/profile'); ?>"><i
+                        <a class="dropdown-item" href="<?php echo base_url('Users/profile'); ?>"><i
                                 class="dw dw-user1"></i> Profile</a>
                         <a class="dropdown-item" href="<?php echo base_url('deskapp/extrapages/profile'); ?>"><i
                                 class="dw dw-settings2"></i> Setting</a>

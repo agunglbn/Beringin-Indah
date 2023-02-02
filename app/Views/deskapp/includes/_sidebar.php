@@ -13,35 +13,33 @@
             <ul id="accordion-menu">
 
                 <li>
-                    <a href="<?php echo base_url('user'); ?>" class="dropdown-toggle no-arrow">
+                    <a href="<?php echo base_url('users'); ?>" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
                     </a>
                 </li>
                 <?php if (in_groups('parataon')) : ?>
-                <?php elseif (in_groups('admin')) : ?>
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon icon-copy ti-package"></span><span class="mtext">Parataon</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="<?php echo base_url('deskapp/tables/basic'); ?>">Data Parataon</a></li>
-                        <li><a href="<?php echo base_url('deskapp/tables/datatable'); ?>">Administrasi</a></li>
+                        <li><a href="<?php echo base_url('/inventory'); ?>">Data Parataon</a></li>
+                        <li><a href="<?php echo base_url('/users/financeParataon'); ?>">Finance</a></li>
                     </ul>
                 </li>
                 <?php endif; ?>
                 <?php if (in_groups('diakonia')) : ?>
-                <?php elseif (in_groups('admin')) : ?>
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon icon-copy ti-server"></span><span class="mtext">Diakonia</span>
                     </a>
                     <ul class="submenu">
                         <li><a href="<?php echo base_url('/admin/jemaat'); ?>">Data Jemaat</a></li>
-                        <li><a href="<?php echo base_url('deskapp/tables/datatable'); ?>">Administrasi</a></li>
+                        <li><a href="<?php echo base_url('/financeDiakon'); ?>">Administrasi</a></li>
                     </ul>
                 </li>
                 <?php endif; ?>
-                <li class="dropdown">
+                <!-- <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon icon-copy fa fa-group"></span><span class="mtext">Naposo</span>
                     </a>
@@ -58,9 +56,18 @@
                         <li><a href="<?php echo base_url('deskapp/tables/basic'); ?>">Data Remaja</a></li>
                         <li><a href="<?php echo base_url('deskapp/tables/datatable'); ?>">Administrasi</a></li>
                     </ul>
-                </li>
+                </li> -->
 
                 <?php if (in_groups('admin')) : ?>
+                <li class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle">
+                        <span class="micon icon-copy ti-server"></span><span class="mtext">Diakonia</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="<?php echo base_url('/admin/jemaat'); ?>">Data Jemaat</a></li>
+                        <li><a href="<?php echo base_url('/admin/kas'); ?>">Administrasi</a></li>
+                    </ul>
+                </li>
                 <li>
                     <a href="<?php echo base_url('admin/berita'); ?>" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-book1"></span><span class="mtext">Berita</span>

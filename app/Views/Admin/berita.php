@@ -211,15 +211,15 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                                             <a class="dropdown-item"
-                                                href="<?php echo base_url('detailBerita/' . $blog->id); ?>"><i
+                                                href="<?php echo base_url('detailBerita/' . $blog->id . '/' . $blog->judul_berita); ?>"><i
                                                     class="dw dw-eye"></i> View</a>
 
                                             <a class="dropdown-item"
-                                                href="<?php echo base_url('formUpdateBerita/' . $blog->id); ?>"><i
+                                                href="<?php echo base_url('formUpdateBerita/' . $blog->id . '/' . $blog->judul_berita); ?>"><i
                                                     class="dw dw-edit2"></i> Edit</a>
 
                                             <a class="dropdown-item" data-toggle="modal" type="button"
-                                                data-target="#confirmation-modal<?= $blog->id; ?>"><i
+                                                data-target="#confirmation-modal<?= $blog->id . '/' . $blog->judul_berita; ?>"><i
                                                     class="DeleteJemaat dw dw-delete-3"></i>Delete</a>
 
                                         </div>
@@ -238,7 +238,8 @@
         foreach ($berita as $blog) :  ?>
         <!-- Confirmation modal -->
 
-        <div class="modal fade" id="confirmation-modal<?= $blog->id; ?>" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal fade" id="confirmation-modal<?= $blog->id . '/' . $blog->judul_berita; ?>" tabindex="-1"
+            role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-body text-center font-18">

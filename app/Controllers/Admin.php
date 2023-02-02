@@ -8,6 +8,7 @@ use App\Models\Kategori;
 use App\Models\Keuangan;
 use App\Models\AuthGroups;
 use App\Models\Berita;
+use App\Models\Divisi;
 use Myth\Auth\Models\UserModel;
 use CodeIgniter\Controller;
 use CodeIgniter\Session\Session;
@@ -19,7 +20,7 @@ class Admin extends BaseController
 {
     protected $session;
 
-    protected $userModel, $keuangan, $db, $builder, $model, $jemaat, $validation, $kategori, $berita;
+    protected $userModel, $divisi, $keuangan, $db, $builder, $model, $jemaat, $validation, $kategori, $berita;
     public function __construct()
     {
 
@@ -27,6 +28,7 @@ class Admin extends BaseController
         $this->builder = $this->db->table('users');
         $this->model = new M_user;
         $this->keuangan = new Keuangan;
+        $this->divisi = new Divisi;
         $this->userModel = new UserModel;
         $this->berita = new Berita;
         $this->jemaat = new Jemaat;
@@ -75,6 +77,7 @@ class Admin extends BaseController
             'title' => 'Add New User',
             'validation' => \Config\Services::validation(),
             'group_role' => $this->model->groupRole(),
+            'divisi' => $this->divisi->findAll()
         ];
         return view('Admin/addNewUser', $data);
     }
@@ -109,7 +112,8 @@ class Admin extends BaseController
             'divisi' => $this->request->getVar('divisi'),
             'fullname' => $this->request->getVar('fullname'),
             'password_hash' => Password::hash($this->request->getVar('password_hash')),
-            'active' => 1
+            'active' => 1,
+            'groups' => $this->request->getVar('role'),
         ]);
         // $data = [
         //     'username' => $this->request->getVar('username'),
@@ -575,18 +579,24 @@ class Admin extends BaseController
 
     public function kas()
     {
+        // $total = $this->db->table('kas')->select('(SELECT SUM(kas.nominal) FROM kas WHERE kas.jenis_khas=2) AS total', false);
+        // $query = $total->get();
+        $pengeluaran = $this->keuangan->where('jenis_khas', 2,)->where('status', 2)->select('sum(nominal) as total')->first();
+        $pemasukan = $this->keuangan->where('jenis_khas', 1)->select('sum(nominal) as total')->first();
 
-        // $data['user'] = $session->getWhere('user', ['username' => $session->logged_in('username')])->row_array();
-        //  $session->set('user', ['username' => 'username']);
-        // $data['user'] = $this->keuangan->getWhere(['username' => $this->session->set('username')])->getRow();
-        // $data['user'] = $this->db->table('user')->getWhere(['username' => $userData])->getRow();
+
         $data = ([
             'title' => 'Data Kas Beringin Indah',
-            'keuangan'  => $this->keuangan->orderBy('username', 'asc') //ASC dan DESC   
+            'keuangan'  => $this->keuangan->where('jenis_khas', 1)->orderBy('created', 'desc') //ASC dan DESC   
                 ->findAll(),
             // 'keuangan'  => $this->keuangan->where(['username' => user()->username])->orderBy('username', 'asc') //ASC dan DESC   
             //     ->findAll(),
+            'pengeluaran' => $this->keuangan->where('jenis_khas', 2)->orderBy('created', 'desc') //ASC dan DESC   
+                ->findAll(),
 
+            'total_pengeluaran' => $pengeluaran['total'],
+            'total_pemasukan' => $pemasukan['total'],
+            'total_kas' => $pemasukan['total'] - $pengeluaran['total'],
             'kategori' => $this->kategori->findAll(),
             'validation' => $this->validation,
 
@@ -644,13 +654,15 @@ class Admin extends BaseController
             'fullname' => $this->request->getVar('fullname'),
             'jenis_khas' => $this->request->getVar('jenis_khas'),
             'deskripsi' => $this->request->getVar('deskripsi'),
-            'nominal' => $this->request->getVar('nominal'),
+            'nominal' =>  str_replace(".", "", $this->request->getVar('nominal')), //Mengubah Tanda Titik Menjadi Integer
             'tanggal' => $this->request->getVar('tanggal'),
+            'groups' => $this->request->getVar('groups'),
+
         ]);
 
         if ($success) {
             session()->setFlashdata('success', 'Data Success be added !!!');
-            return redirect()->to(base_url('/Kas'));
+            return redirect()->back()->withInput();
         }
     }
 
@@ -699,25 +711,69 @@ class Admin extends BaseController
         }
         //<?php echo number_format($khas['nominal'], 0, ',', '.'); --> nampilkan Data Number
         $success =  $this->keuangan->update($id, [
-            'username' => $this->request->getVar('username'),
             'fullname' => $this->request->getVar('fullname'),
             'jenis_khas' => $this->request->getVar('jenis_khas'),
             'deskripsi' => $this->request->getVar('deskripsi'),
-            'nominal' => $this->request->getVar('nominal'),
+            'nominal' =>  str_replace(".", "", $this->request->getVar('nominal')), //Mengubah Tanda Titik Menjadi Integer
             'tanggal' => $this->request->getVar('tanggal'),
+            'groups' => $this->request->getVar('groups'),
         ]);
 
         if ($success) {
             session()->setFlashdata('success', 'Data Success be Updated !!');
-            return redirect()->to(base_url('/Kas'));
+            return redirect()->back()->withInput();
         }
     }
 
     public function deleteKas($id)
     {
-        $data['kas'] = $this->keuangan->where('id', $id)->delete();
-        // $jemaat = $this->jemaat->find($id);
-        // $this->jemaat->delete($id);
-        return redirect()->back()->with('success', 'Data Success be Delete !!');
+        if (!$this->request->getVar('confirm_delete')) {
+            // Tampilkan form konfirmasi
+            return redirect()->back()->withInput();
+        } else {
+            // Proses delete data
+            $success =  $this->keuangan->where('id', $id)->delete();
+            if ($success) {
+                session()->setFlashdata('success', 'Data Success Be Added !');
+            } else {
+                session()->setFlashdata('error', 'Data Can Not Deleted !');
+            }
+            return redirect()->back()->withInput();
+        }
     }
+
+    function updateStatusKas($id)
+    {
+        $rules = [
+            'status' => 'required',
+        ];
+        if (!$this->validate($rules)) {
+            session()->setFlashdata('error', 'Data Cannot Be Changed !!!');
+            return redirect()->back()->withInput();
+        }
+        $success = $this->keuangan->update($id, [
+            'status' => $this->request->getVar('status'),
+        ]);
+
+        if ($success) {
+            session()->setFlashdata('success', 'Data Changed Success !!!');
+            return redirect()->to(base_url('/Kas'));
+        }
+    }
+
+    // Belajar Looping
+    // function looping()
+    // {
+    //     for ($i = 1; $i <= 100; $i++) {
+    //         if ($i % 3 == 0 && $i % 5 == 0) {
+    //             echo "Fazz bazz<br>";
+    //         } elseif ($i % 3 == 0) {
+    //             echo "Fazz<br> ";
+    //         } elseif ($i % 5 == 0) {
+    //             echo "Bazz<br>";
+    //         } else {
+    //             echo "$i<br>";
+    //         }
+    //     }
+    // }
 }

@@ -13,7 +13,7 @@ class M_user extends Model
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
     protected $allowedFields  = [
-        'email', 'username', 'fullname', 'mobile', 'password_hash', 'reset_hash', 'reset_at', 'reset_expires', 'activate_hash',
+        'email', 'username', 'fullname', 'mobile', 'groups', 'password_hash', 'reset_hash', 'reset_at', 'reset_expires', 'activate_hash',
         'status', 'status_message', 'active', 'force_pass_reset', 'permissions', 'deleted_at',
     ];
     protected $afterInsert        = ['addToGroup'];

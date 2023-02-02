@@ -9,6 +9,21 @@ use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
+use App\Models\M_user;
+use App\Models\Jemaat;
+use App\Models\Inventory;
+use App\Models\Kategori;
+use App\Models\Peminjaman;
+use App\Models\Divisi;
+use App\Models\Keuangan;
+use App\Models\AuthGroups;
+use App\Models\Berita;
+use Myth\Auth\Models\UserModel;
+use CodeIgniter\Session\Session;
+use Myth\Auth\Config\Auth as AuthConfig;
+use Myth\Auth\Entities\User;
+use Myth\Auth\Password;
+
 
 /**
  * Class BaseController
@@ -22,6 +37,13 @@ use Psr\Log\LoggerInterface;
  */
 abstract class BaseController extends Controller
 {
+    protected $userModel, $peminjaman, $inventory, $divisi, $keuangan, $db, $builder, $model, $jemaat, $validation, $kategori, $berita;
+
+
+
+
+
+
     /**
      * Instance of the main Request object.
      *
@@ -47,10 +69,22 @@ abstract class BaseController extends Controller
         parent::initController($request, $response, $logger);
 
         // Preload any models, libraries, etc, here.
-
+        $this->db = \Config\Database::connect();
+        $this->builder = $this->db->table('users');
+        $this->model = new M_user;
+        $this->keuangan = new Keuangan;
+        $this->peminjaman = new Peminjaman;
+        $this->userModel = new UserModel;
+        $this->berita = new Berita;
+        $this->inventory = new Inventory;
+        $this->jemaat = new Jemaat;
+        $this->kategori = new Kategori;
+        $this->validation = \Config\Services::validation();
+        helper('url', 'text');
         // E.g.: 
         $this->session = \Config\Services::session();
         $this->session->start();
         $this->validation = \Config\Services::validation();
+        $this->db = \Config\Database::connect();
     }
 }

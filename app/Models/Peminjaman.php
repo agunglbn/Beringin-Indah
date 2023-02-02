@@ -4,19 +4,17 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Keuangan extends Model
+class Peminjaman extends Model
 {
     protected $DBGroup          = 'default';
-    protected $table            = 'kas';
+    protected $table            = 'peminjaman';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $insertID         = 0;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [
-        'username', 'fullname', 'jenis_khas', 'groups', 'deskripsi', 'nominal', 'status', 'tanggal', 'total_kas', 'created', 'modified'
-    ];
+    protected $allowedFields    = ['username', 'nama_peminjam', 'tanggal', 'groups', 'return_date', 'file', 'status', 'created', 'modified'];
 
     // Dates
     protected $useTimestamps = true;
@@ -41,19 +39,4 @@ class Keuangan extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
-
-
-    function khas()
-    {
-        $builder = $this->db->table('user');
-        $query = $builder->where('username', $this->session->set('username'));
-        return $query->get();
-    }
-    public function detailKas($id = 0)
-    {
-        $sql = "Select * From kas WHERE id='$id'";
-        $query  = $this->db->query($sql);
-        $data = $query->getResultArray();
-        return $data;
-    }
 }

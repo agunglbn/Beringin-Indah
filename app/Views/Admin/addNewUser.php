@@ -110,15 +110,24 @@
                     <div class="form-group row">
                         <label class="col-sm-12 col-md-2 col-form-label">Divisi</label>
                         <div class="col-sm-12 col-md-10">
-                            <input name="divisi"
-                                class="form-control <?= $validation->hasError('username') ? 'is-invalid' : null ?>"
-                                type="text" placeholder="Parataon" />
-                            <?php if ($validation->hasError('divisi')) : ?>
+                            <select name="divisi"
+                                class="custom-select col-12 <?= $validation->hasError('divisi') ? 'is-invalid' : null ?>">
+                                <?php foreach ($divisi as $role) :  ?>
+                                <option value="" disabled selected hidden>--Choice--</option>
+                                <option value="<?php echo $role['nama_divisi']; ?>">
+                                    <?php echo $role['nama_divisi']; ?>
+                                </option>
+
+                                <?php endforeach; ?>
+
+                            </select>
+                            <?php if ($validation->hasError('role')) : ?>
                             <div class="invalid-feedback">
-                                <?= $validation->getError('divisi'); ?>
+                                <?= $validation->getError('role'); ?>
                             </div>
                             <?php endif; ?>
                         </div>
+
                     </div>
 
                     <div class="form-group row">
